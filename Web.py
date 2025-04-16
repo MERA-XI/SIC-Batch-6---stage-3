@@ -19,42 +19,42 @@ if Opsi == "Beranda":
     st.subheader("📸 Gambar Alat")
     col1, col2 = st.columns(2)
     with col1:
-        st.image("gambar/alat1.jpeg", caption="Gambar 1", use_column_width=True, width=300)
-        st.image("gambar/alat2.jpeg", caption="Gambar 5", use_column_width=True, width=300)
+        st.image("gambar/alat1.jpeg", caption="Gambar 1", width=300)
+        st.image("gambar/alat2.jpeg", caption="Gambar 5", width=300)
     with col2:
-        st.image("gambar/alat3.jpeg", caption="Gambar 7", use_column_width=True, width=300)
-        st.image("gambar/alat4.jpeg", caption="Gambar 3", use_column_width=True, width=300)
+        st.image("gambar/alat3.jpeg", caption="Gambar 7", width=300)
+        st.image("gambar/alat4.jpeg", caption="Gambar 3", width=300)
     st.markdown("-----")
     st.header("Dilengkapi dengan kamera yang dapat:")
     st.markdown("- Mendeteksi emosi wajah 👁️")
     col1, col2 = st.columns(2)
     with col1:
-        st.image("imgWajah.jpg", use_column_width=True)
+        st.image("imgWajah.jpg")
     with col2:
-        st.image("imgWajah2.jpg", use_column_width=True)
+        st.image("imgWajah2.jpg")
     st.markdown("-----")
     st.markdown("- Mendeteksi objek 🎯")
     col1, col2 = st.columns(2)
     with col1:
-        st.image("imgObjek.jpg", use_column_width=True)
+        st.image("imgObjek.jpg")
     with col2:
         st.empty()
     st.markdown("-----")
     st.markdown("- Membaca teks lalu mengubahnya menjadi suara 🗣️")
     col1, col2 = st.columns(2)
     with col1:
-        st.image("imgteks.jpg", use_column_width=True)
+        st.image("imgteks.jpg")
     with col2:
         st.empty()
     st.markdown("-----")
     st.header("Web Interaktif Untuk Memantau Alat dan Pengguna")
     col1, col2 = st.columns(2)
-    st.image("gambar/ubidot.png ", use_column_width=True)
+    st.image("gambar/ubidot.png ")
     st.markdown("-----")
     st.header("Alat Memiliki Hasil yang Dapat Didengar Melalui Speaker")
     col1, col2 = st.columns(2)
     with col1:
-        st.image("gambar/speaker.jpeg", use_column_width=True)
+        st.image("gambar/speaker.jpeg")
     with col2:
         st.empty()
     st.markdown("---")
@@ -113,7 +113,7 @@ elif Opsi == "Ekspresi Wajah Pengguna":
                 y='Jumlah',
                 tooltip=['Ekspresi', 'Jumlah']
             ).interactive()
-            st.altair_chart(chart, use_container_width=True)
+            st.altair_chart(chart)
             st.subheader("Tabel Data Ekspresi")
             st.dataframe(df_emosi)
             csv_download = df_emosi.to_csv(index=False).encode('utf-8')
