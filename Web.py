@@ -123,71 +123,71 @@ elif Opsi == "Ekspresi Wajah Pengguna":
         st.error(f"Terjadi error saat mengambil data: {e}")
 
 elif Opsi == "Tanya AI":
-import streamlit as st
-import google.generativeai as genai
-from gtts import gTTS
-import base64
-import os
-
-# Konfigurasi Gemini AI
-genai.configure(api_key="AIzaSyBPddmxJ5KDxoqhm0FfhUUU9IWtek0dyFs")  # Ganti dengan API key Anda
-
-# Inisialisasi model Gemini
-@st.cache_resource
-def load_gemini_model():
-    return genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
-        system_instruction="Anda adalah asisten AI yang membantu pengguna dalam bahasa Indonesia."
-    )
-
-model = load_gemini_model()
-
-# Tampilan Streamlit
-st.title("🧠 Chatbot AI Bahasa Indonesia")
-
-def text_to_speech(text, lang='id'):
-    """Konversi teks ke suara dan putar otomatis"""
-    tts = gTTS(text=text, lang=lang)
-    tts.save("response.mp3")
+    import streamlit as st
+    import google.generativeai as genai
+    from gtts import gTTS
+    import base64
+    import os
     
-    with open("response.mp3", "rb") as audio_file:
-        audio_bytes = audio_file.read()
+    # Konfigurasi Gemini AI
+    genai.configure(api_key="AIzaSyBPddmxJ5KDxoqhm0FfhUUU9IWtek0dyFs")  # Ganti dengan API key Anda
     
-    b64 = base64.b64encode(audio_bytes).decode()
-    audio_html = f"""
-    <audio autoplay>
-      <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-    </audio>
-    """
-    st.markdown(audio_html, unsafe_allow_html=True)
-    os.remove("response.mp3")  # Hapus file setelah digunakan
-
-# Fungsi Chatbot
-def tanya_model():
-    with st.form("chat_form"):
-        user_input = st.text_input("Tanyakan sesuatu:")
-        submit_button = st.form_submit_button("Kirim")
+    # Inisialisasi model Gemini
+    @st.cache_resource
+    def load_gemini_model():
+        return genai.GenerativeModel(
+            model_name="gemini-1.5-flash",
+            system_instruction="Anda adalah asisten AI yang membantu pengguna dalam bahasa Indonesia."
+        )
+    
+    model = load_gemini_model()
+    
+    # Tampilan Streamlit
+    st.title("🧠 Chatbot AI Bahasa Indonesia")
+    
+    def text_to_speech(text, lang='id'):
+        """Konversi teks ke suara dan putar otomatis"""
+        tts = gTTS(text=text, lang=lang)
+        tts.save("response.mp3")
         
-        if submit_button and user_input:
-            with st.spinner("Memproses..."):
-                try:
-                    response = model.generate_content(
-                        user_input,
-                        generation_config=genai.types.GenerationConfig(
-                            max_output_tokens=500,
-                            temperature=0.7
+        with open("response.mp3", "rb") as audio_file:
+            audio_bytes = audio_file.read()
+        
+        b64 = base64.b64encode(audio_bytes).decode()
+        audio_html = f"""
+        <audio autoplay>
+          <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+        </audio>
+        """
+        st.markdown(audio_html, unsafe_allow_html=True)
+        os.remove("response.mp3")  # Hapus file setelah digunakan
+    
+    # Fungsi Chatbot
+    def tanya_model():
+        with st.form("chat_form"):
+            user_input = st.text_input("Tanyakan sesuatu:")
+            submit_button = st.form_submit_button("Kirim")
+            
+            if submit_button and user_input:
+                with st.spinner("Memproses..."):
+                    try:
+                        response = model.generate_content(
+                            user_input,
+                            generation_config=genai.types.GenerationConfig(
+                                max_output_tokens=500,
+                                temperature=0.7
+                            )
                         )
-                    )
-                    
-                    st.markdown("**🤖 Jawaban:**")
-                    st.write(response.text)
-                    
-                    # Konversi ke suara
-                    text_to_speech(response.text)
-                    
-                except Exception as e:
-                    st.error(f"Error: {str(e)}")
-
-
-
-    tanya_model()
+                        
+                        st.markdown("**🤖 Jawaban:**")
+                        st.write(response.text)
+                        
+                        # Konversi ke suara
+                        text_to_speech(response.text)
+                        
+                    except Exception as e:
+                        st.error(f"Error: {str(e)}")
+    
+    
+    
+        tanya_model()
