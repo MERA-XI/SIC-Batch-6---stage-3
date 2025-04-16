@@ -123,84 +123,71 @@ elif Opsi == "Ekspresi Wajah Pengguna":
         st.error(f"Terjadi error saat mengambil data: {e}")
 
 elif Opsi == "Tanya AI":
-    import torch
-    import google.generativeai as genai
-    import pyttsx3
-    import threading
-    from gtts import gTTS
-    import base64
-    
-    st.title("🧠 Chatbot AI")
-    engine = pyttsx3.init()
-    engine.setProperty('rate', 150)
-    voices = engine.getProperty('voices')
-    for voice in voices:
-        if "indonesian" in voice.name.lower() or "id" in str(voice.languages).lower():
-            engine.setProperty('voice', voice.id)
-            break
+import streamlit as st
+import google.generativeai as genai
+from gtts import gTTS
+import base64
+import os
 
-    def speak(text):
-        def run():
-            engine.say(text)
-            engine.runAndWait()
-        threading.Thread(target=run).start()
+# Konfigurasi Gemini AI
+genai.configure(api_key="AIzaSyBPddmxJ5KDxoqhm0FfhUUU9IWtek0dyFs")  # Ganti dengan API key Anda
 
-    @st.cache_resource
-    def load_model():
-        return torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
-
-    model_yolo = load_model()
-
-    KNOWN_WIDTH = 40.0
-    FOCAL_LENGTH = 600
-
-    genai.configure(api_key="AIzaSyBPddmxJ5KDxoqhm0FfhUUU9IWtek0dyFs")
-
-    model = genai.GenerativeModel(
+# Inisialisasi model Gemini
+@st.cache_resource
+def load_gemini_model():
+    return genai.GenerativeModel(
         model_name="gemini-1.5-flash",
-        system_instruction="Kamu "
+        system_instruction="Anda adalah asisten AI yang membantu pengguna dalam bahasa Indonesia."
     )
 
-    def tanya_model():
-        if "chat_response" not in st.session_state:
-            st.session_state.chat_response = ""
-        if "tokens_used" not in st.session_state:
-            st.session_state.tokens_used = 0
+model = load_gemini_model()
 
-        with st.form("chat_form"):
-            user_question = st.text_input("Tanyakan sesuatu pada sang AI AI:")
-            submitted = st.form_submit_button("Tanyakan")
+# Tampilan Streamlit
+st.title("🧠 Chatbot AI Bahasa Indonesia")
 
-            if submitted and user_question:
-                response = model.generate_content(
-                    user_question,
-                    generation_config=genai.types.GenerationConfig(
-                        max_output_tokens=150,
-                        temperature=1.0,
-                        top_k=5,
-                        top_p=1.0,
+def text_to_speech(text, lang='id'):
+    """Konversi teks ke suara dan putar otomatis"""
+    tts = gTTS(text=text, lang=lang)
+    tts.save("response.mp3")
+    
+    with open("response.mp3", "rb") as audio_file:
+        audio_bytes = audio_file.read()
+    
+    b64 = base64.b64encode(audio_bytes).decode()
+    audio_html = f"""
+    <audio autoplay>
+      <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
+    </audio>
+    """
+    st.markdown(audio_html, unsafe_allow_html=True)
+    os.remove("response.mp3")  # Hapus file setelah digunakan
+
+# Fungsi Chatbot
+def tanya_model():
+    with st.form("chat_form"):
+        user_input = st.text_input("Tanyakan sesuatu:")
+        submit_button = st.form_submit_button("Kirim")
+        
+        if submit_button and user_input:
+            with st.spinner("Memproses..."):
+                try:
+                    response = model.generate_content(
+                        user_input,
+                        generation_config=genai.types.GenerationConfig(
+                            max_output_tokens=500,
+                            temperature=0.7
+                        )
                     )
-                )
+                    
+                    st.markdown("**🤖 Jawaban:**")
+                    st.write(response.text)
+                    
+                    # Konversi ke suara
+                    text_to_speech(response.text)
+                    
+                except Exception as e:
+                    st.error(f"Error: {str(e)}")
 
-                st.session_state.chat_response = response.text
-                st.session_state.tokens_used = model.count_tokens(response.text).total_tokens
 
-                st.markdown("**💬 Jawaban dari AI:**")
-                st.write(st.session_state.chat_response)
-                st.caption(f"🔢 Jumlah token output: {st.session_state.tokens_used}")
-
-                tts = gTTS(text=response.text, lang='id')
-                tts.save("response.mp3")
-
-                audio_file = open("response.mp3", "rb")
-                audio_bytes = audio_file.read()
-                b64 = base64.b64encode(audio_bytes).decode()
-                audio_html = f"""
-                    <audio autoplay>
-                    <source src="data:audio/mp3;base64,{b64}" type="audio/mp3">
-                    </audio>
-                """
-
-                st.markdown(audio_html, unsafe_allow_html=True)
 
     tanya_model()
