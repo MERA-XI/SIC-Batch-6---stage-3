@@ -1,7 +1,13 @@
 import streamlit as st
 import pandas as pd
-import requests
 import altair as alt
+from pymongo import MongoClient
+
+# Menghubungkan ke MongoDB
+client = MongoClient("mongodb://localhost:27017/")
+db = client["spider_sense_db"]  # Ganti dengan nama database Anda
+penggunaan_collection = db["penggunaan"]  # Ganti dengan nama koleksi penggunaan
+emosi_collection = db["emosi"]  # Ganti dengan nama koleksi emosi
 
 st.sidebar.title("Menu")
 Opsi = st.sidebar.radio("Pilih Halaman", ["Beranda", "Statistik Penggunaan Alat", "Ekspresi Wajah Pengguna", "Tanya AI"])
@@ -63,9 +69,9 @@ if Opsi == "Beranda":
 elif Opsi == "Statistik Penggunaan Alat":
     st.title("📊 Statistik Penggunaan Alat")
     try:
-        response = requests.get("http://localhost:2000/get_data_penggunaan")
-        if response.status_code == 200:
-            data_penggunaan = response.json()
+        # Mengambil data dari MongoDB
+        data_penggunaan = list(penggunaan_collection.find())
+        if data_penggunaan:
             df_penggunaan = pd.DataFrame(data_penggunaan)
             df_penggunaan['timestamp'] = pd.to_datetime(df_penggunaan['timestamp'])
             df_penggunaan['tanggal'] = df_penggunaan['timestamp'].dt.date
@@ -90,16 +96,16 @@ elif Opsi == "Statistik Penggunaan Alat":
                 mime='text/csv'
             )
         else:
-            st.error("Gagal mengambil data penggunaan dari Flask.")
+            st.error("Data penggunaan tidak ditemukan di MongoDB.")
     except Exception as e:
         st.error(f"Terjadi error saat mengambil data: {e}")
 
 elif Opsi == "Ekspresi Wajah Pengguna":
     st.title("😊 Statistik Ekspresi Wajah Pengguna")
     try:
-        response = requests.get("http://localhost:2000/get_data_emosi")
-        if response.status_code == 200:
-            data_emosi = response.json()
+        # Mengambil data dari MongoDB
+        data_emosi = list(emosi_collection.find())
+        if data_emosi:
             df_emosi = pd.DataFrame(data_emosi)
             st.subheader("Distribusi Ekspresi Wajah")
             chart = alt.Chart(df_emosi).mark_bar().encode(
@@ -118,12 +124,11 @@ elif Opsi == "Ekspresi Wajah Pengguna":
                 mime='text/csv'
             )
         else:
-            st.error("Gagal mengambil data emosi dari Flask.")
+            st.error("Data ekspresi wajah tidak ditemukan di MongoDB.")
     except Exception as e:
         st.error(f"Terjadi error saat mengambil data: {e}")
 
 elif Opsi == "Tanya AI":
-    import streamlit as st
     import google.generativeai as genai
     from gtts import gTTS
     import base64
@@ -188,6 +193,4 @@ elif Opsi == "Tanya AI":
                     except Exception as e:
                         st.error(f"Error: {str(e)}")
     
-    
-    
-        tanya_model()
+    tanya_model()
