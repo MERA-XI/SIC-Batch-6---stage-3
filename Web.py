@@ -43,7 +43,7 @@ if Opsi == "Beranda":
     st.markdown("- Membaca teks lalu mengubahnya menjadi suara 🗣️")
     col1, col2 = st.columns(2)
     with col1:
-        st.image("gambar/imgteks.jpg")
+        st.image("gambar/imgTeks.jpg")
     with col2:
         st.empty()
     st.markdown("-----")
