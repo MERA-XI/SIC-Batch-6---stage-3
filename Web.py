@@ -29,9 +29,9 @@ if Opsi == "Beranda":
     st.markdown("- Mendeteksi emosi wajah 👁️")
     col1, col2 = st.columns(2)
     with col1:
-        st.image("imgWajah.jpg")
+        st.image("gambar/imgWajah.jpg")
     with col2:
-        st.image("imgWajah2.jpg")
+        st.image("gambar/imgWajah2.jpg")
     st.markdown("-----")
     st.markdown("- Mendeteksi objek 🎯")
     col1, col2 = st.columns(2)
@@ -43,7 +43,7 @@ if Opsi == "Beranda":
     st.markdown("- Membaca teks lalu mengubahnya menjadi suara 🗣️")
     col1, col2 = st.columns(2)
     with col1:
-        st.image("imgteks.jpg")
+        st.image("gambar/imgteks.jpg")
     with col2:
         st.empty()
     st.markdown("-----")
