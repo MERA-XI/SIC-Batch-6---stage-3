@@ -22,7 +22,7 @@ import json
 
 app = Flask(__name__)
 
-camera_url = "http://192.168.137.122/capture"
+camera_url = "http://192.168.1.12:2000/capture"
 camera_url_sensor = camera_url
 current_mode = "deteksi wajah"
 hasil_terakhir = "Belum ada hasil."
@@ -112,7 +112,7 @@ def ambil_foto():
             image_bytes = io.BytesIO(response.content)
             print("Gambar berhasil diambil. Mengirim ke /proses_gambar")
             send_response = requests.post(
-                "http://localhost:2000/proses_gambar",
+                "http://192.168.1.12:2000/proses_gambar",
                 files={"image": ("frame.jpg", image_bytes, "image/jpeg")},
                 data={"mode": current_mode}
             )
@@ -240,95 +240,34 @@ def kirim_data_otomatis():
                         esp32_data = {}
                         esp32_status = "Alat Hidup, Data JSON Error"
                 else:
-                    esp32_data = {}
                     esp32_status = "Alat Mati"
+                    esp32_data = {}
             except requests.exceptions.RequestException:
-                esp32_data = {}
                 esp32_status = "Alat Mati"
+                esp32_data = {}
 
-            penggunaan_data = {
-                "hari": hari,
-                "tanggal": tanggal,
-                "waktu": waktu,
+            data = {
                 "timestamp": timestamp,
-                "komponen": esp32_status,
-                "jumlah": jumlah_foto,
-            }
-            emosi_data = {
-                "Ekspresi": esp32_data.get("emosi", {}).get("ekspresi", "Tidak Ada"),
-                "Jumlah": esp32_data.get("emosi", {}).get("jumlah", 0),
-                "hari": hari,
-                "tanggal": tanggal,
-                "waktu": waktu,
-                "timestamp": timestamp
+                "status": esp32_status,
+                "jumlah_foto": jumlah_foto,
+                "mode": upload_data_mode,
+                "kamera": esp32_data
             }
 
-            if upload_data_mode == "semua" or upload_data_mode == "penggunaan":
-                penggunaan_collection.insert_one(penggunaan_data)
-                print(f"Data Penggunaan terkirim: {penggunaan_data}")
-            if upload_data_mode == "semua" or upload_data_mode == "emosi":
-                emosi_collection.insert_one(emosi_data)
-                print(f"Data Emosi terkirim: {emosi_data}")
+            kirim_data_ke_ubidots(data)
 
-            if upload_data_mode != "tidak ada":
-                hari_dict = {
-                    "Monday": "senin",
-                    "Tuesday": "selasa",
-                    "Wednesday": "rabu",
-                    "Thursday": "kamis",
-                    "Friday": "jumat",
-                    "Saturday": "sabtu",
-                    "Sunday": "minggu"
-                }
-                hari_ubidots = hari_dict.get(hari, "lainnya")
+            df = pd.read_csv(data_file)
+            df = df.append({"timestamp": timestamp, "komponen": "kamera " + esp32_status}, ignore_index=True)
+            df.to_csv(data_file, index=False)
 
-                emosi_dict = {
-                    "Senang": "Senang",
-                    "Sedih": "Sedih",
-                    "Netral": "Netral",
-                    "Marah": "Marah"
-                }
-                ekspresi_ubidots = emosi_dict.get(emosi_data["Ekspresi"], "Tidak Ada")
-
-                ubidots_payload = {
-                    hari_ubidots: {"value": jumlah_foto},
-                    "jumlah emosi": {"value": emosi_data["Jumlah"]},
-                    ekspresi_ubidots: {"value": emosi_data["Jumlah"]}
-                }
-                kirim_data_ke_ubidots(ubidots_payload)
-
-            time.sleep(3)
+            time.sleep(5)
 
         except Exception as e:
-            print(f"Gagal mengirim data: {e}")
+            print(f"Error dalam pengiriman data otomatis: {e}")
 
-        time.sleep(3)
-
-@app.route('/get_data_penggunaan', methods=['GET'])
-def get_data_penggunaan():
-    try:
-        client = get_mongo_client()
-        db = client['SPIDER-SENSE']
-        collection = db['PenggunaanAlat']
-        data_penggunaan = list(collection.find({}, {'_id': 0}))
-        return jsonify(data_penggunaan)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/get_data_emosi', methods=['GET'])
-def get_data_emosi():
-    try:
-        client = get_mongo_client()
-        db = client['SPIDER-SENSE']
-        collection = db['DataEmosi']
-        data_emosi = list(collection.find({}, {'_id': 0}))
-        return jsonify(data_emosi)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+thread = threading.Thread(target=kirim_data_otomatis)
+thread.daemon = True
+thread.start()
 
 if __name__ == "__main__":
-    thread = threading.Thread(target=kirim_data_otomatis)
-    thread.daemon = True
-    thread.start()
-
-    app.run(host="0.0.0.0", port=2000, debug=False)
+    app.run(host="192.168.1.12", port=2000, debug=True)
