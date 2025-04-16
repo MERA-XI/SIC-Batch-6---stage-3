@@ -4,10 +4,10 @@ import altair as alt
 from pymongo import MongoClient
 
 # Menghubungkan ke MongoDB
-client = MongoClient("mongodb://localhost:27017/")
-db = client["spider_sense_db"]  # Ganti dengan nama database Anda
-penggunaan_collection = db["penggunaan"]  # Ganti dengan nama koleksi penggunaan
-emosi_collection = db["emosi"]  # Ganti dengan nama koleksi emosi
+client = MongoClient("mongodb+srv://meraXi:1234@sicbatch6.1o8uifx.mongodb.net/?retryWrites=true&w=majority&appName=SICBATCH6")
+db = client["SPIDER-SENSE"]
+penggunaan_collection = db["PenggunaanAlat"]  
+emosi_collection = db["DataEmosi"] 
 
 st.sidebar.title("Menu")
 Opsi = st.sidebar.radio("Pilih Halaman", ["Beranda", "Statistik Penggunaan Alat", "Ekspresi Wajah Pengguna", "Tanya AI"])
