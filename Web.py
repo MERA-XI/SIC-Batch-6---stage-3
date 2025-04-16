@@ -49,7 +49,7 @@ if Opsi == "Beranda":
     st.markdown("-----")
     st.header("Web Interaktif Untuk Memantau Alat dan Pengguna")
     col1, col2 = st.columns(2)
-    st.image("gambar/ubidot.png ")
+    st.image("gambar/ubidot.png")
     st.markdown("-----")
     st.header("Alat Memiliki Hasil yang Dapat Didengar Melalui Speaker")
     col1, col2 = st.columns(2)
