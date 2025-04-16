@@ -20,10 +20,10 @@ if Opsi == "Beranda":
     col1, col2 = st.columns(2)
     with col1:
         st.image("gambar/alat1.jpeg", caption="Gambar 1", width=300)
-        st.image("gambar/alat2.jpeg", caption="Gambar 5", width=300)
+        st.image("gambar/alat2.jpeg", caption="Gambar 2", width=300)
     with col2:
-        st.image("gambar/alat3.jpeg", caption="Gambar 7", width=300)
-        st.image("gambar/alat4.jpeg", caption="Gambar 3", width=300)
+        st.image("gambar/alat3.jpeg", caption="Gambar 3", width=300)
+        st.image("gambar/alat4.jpeg", caption="Gambar 4", width=300)
     st.markdown("-----")
     st.header("Dilengkapi dengan kamera yang dapat:")
     st.markdown("- Mendeteksi emosi wajah 👁️")
