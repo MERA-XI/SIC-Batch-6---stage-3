@@ -135,7 +135,7 @@ elif Opsi == "Tanya AI":
     import os
     
     # Konfigurasi Gemini AI
-    genai.configure(api_key="AIzaSyBPddmxJ5KDxoqhm0FfhUUU9IWtek0dyFs")  # Ganti dengan API key Anda
+    genai.configure(api_key="AIzaSyBPddmxJ5KDxoqhm0FfhUUU9IWtek0dyFs")
     
     # Inisialisasi model Gemini
     @st.cache_resource
