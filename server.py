@@ -18,6 +18,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from yolov5 import YOLOv5
 import easyocr
+import base64
 
 # ==================== KONFIGURASI AWAL ====================
 
