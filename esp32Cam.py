@@ -21,8 +21,8 @@ except Exception as e:
     raise SystemExit()
 
 # Konfigurasi Wi-Fi
-ssid = "da"
-password = "password"
+ssid = "enumatechz"
+password = "3numaTechn0l0gy"
 
 wifi = network.WLAN(network.STA_IF)
 wifi.active(True)
