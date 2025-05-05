@@ -13,7 +13,7 @@ try:
     camera.saturation(0)
     camera.brightness(0)
     camera.contrast(0)
-    camera.flip(1)
+    camera.flip(0)
     camera.mirror(1)
     print("✅ Kamera berhasil diinisialisasi.")
 except Exception as e:
