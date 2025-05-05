@@ -11,7 +11,7 @@ from machine import I2S, Pin  # Untuk interface I2S dan pin GPIO
 # Konfigurasi WiFi
 SSID = "enumatechz"         # Nama jaringan WiFi
 PASSWORD = "3numaTechn0l0gy" # Password WiFi
-SERVER_URL = "http://192.168.43.170:5000/upload"  # Alamat server tujuan
+SERVER_URL = "http://192.168.43.170:5000/upload"  # server flask
 
 # Konfigurasi Audio
 SAMPLE_RATE = 16000         # Jumlah sample per detik (16kHz)
