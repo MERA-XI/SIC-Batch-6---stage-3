@@ -96,7 +96,7 @@ if Opsi == "Beranda":
                     st.warning(f"Tidak dapat memuat metrik: {e}")
             
         with col2:
-            st.image("gambar/img3.jpg", caption="Perangkat Spider Sense")
+            st.image("img3.jpg", caption="Perangkat Spider Sense")
 
     st.markdown("<br>", unsafe_allow_html=True)
     st.divider()
